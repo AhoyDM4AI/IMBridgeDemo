@@ -1,7 +1,11 @@
 <template>
   <main>
     <n-layout has-sider>
-      <n-layout-sider bordered :width="443" style="background: rgb(234,238,243);">
+      <n-layout-sider
+        bordered
+        :width="443"
+        style="background: rgb(234, 238, 243)"
+      >
         <div>
           <h2 id="title">Query Editor</h2>
           <CodeEditor
@@ -16,10 +20,10 @@
         <div>
           <h2 id="title">Function Editor</h2>
           <CodeEditor
-            :lines="22"
+            :lines="20"
             :lang="'python'"
             :readonly="false"
-            fontsize="10"
+            fontsize="12"
             ref="udf_editor"
           />
           <div style="padding: 3px; padding-top: 8px">
@@ -29,13 +33,13 @@
                   <n-gi>
                     <n-checkbox
                       v-model:checked="rewrite_on"
-                      label="Hoisting Rewrite"
+                      label="Function Rewrite"
                     />
                   </n-gi>
                   <n-gi>
                     <n-checkbox
                       v-model:checked="adaptive_on"
-                      label="Adaptive Batch Size"
+                      label="Adaptive Batching"
                     />
                   </n-gi>
                 </n-grid>
@@ -53,10 +57,11 @@
           </div>
         </div>
       </n-layout-sider>
+      <n-divider vertical style="margin-left: 4px;margin-right: 0"/>
       <n-layout-content
         bordered
         content-style="padding: 10px;"
-        style="height: 93vh;background: rgb(234,238,243);"
+        style="height: 91.5vh; background: rgb(234, 238, 243)"
       >
         <h2 id="title">Analysis Report</h2>
         <n-spin :show="loading" size="large">
@@ -69,51 +74,70 @@
               @click="handleReset"
               name="1"
             >
-              <n-flex>
-                <n-card id="plan" title="Naive Code:">
-                  <CodeEditor
-                    :lines="15"
-                    :lang="'python'"
-                    :readonly="true"
-                    fontsize="10"
-                    ref="udf_plan_n"
-                  />
-                </n-card>
-                <n-card id="plan" title="Rewritten Code:">
-                  <CodeEditor
-                    :lines="15"
-                    :lang="'python'"
-                    :readonly="true"
-                    fontsize="10"
-                    ref="udf_plan_o"
-                  />
-                </n-card>
-              </n-flex>
+              <n-grid x-gap="12" :cols="2">
+                <n-gi>
+                  <n-card id="plan" title="Naive Code:">
+                    <n-image width="80" src="/src/assets/all.svg" />
+                    <CodeEditor
+                      :lines="15"
+                      :lang="'python'"
+                      :readonly="true"
+                      fontsize="12"
+                      ref="udf_plan_n"
+                    />
+                  </n-card>
+                </n-gi>
+                <n-gi>
+                  <n-card id="plan" title="Rewritten Code:">
+                    <n-image
+                      v-if="rewrite_on"
+                      width="53"
+                      src="/src/assets/rewrite.svg"
+                    />
+                    <n-image v-else width="80" src="/src/assets/all.svg" />
+                    <CodeEditor
+                      :lines="15"
+                      :lang="'python'"
+                      :readonly="true"
+                      fontsize="12"
+                      ref="udf_plan_o"
+                    />
+                  </n-card>
+                </n-gi>
+              </n-grid>
             </n-collapse-item>
             <n-collapse-item title="Prediction Query Plan" name="2">
-              <n-flex>
-                <n-card id="plan" title="Naive Plan:">
-                  <PlanTree />
-                </n-card>
-                <n-card id="plan" title="Optimized Plan:">
-                  <PlanTree />
-                </n-card>
-              </n-flex>
+              <n-grid x-gap="12" :cols="2">
+                <n-gi>
+                  <n-card id="plan" title="Naive Plan:">
+                    <PlanTree />
+                  </n-card>
+                </n-gi>
+                <n-gi>
+                  <n-card id="plan" title="Optimized Plan:">
+                    <PlanTree />
+                  </n-card>
+                </n-gi>
+              </n-grid>
             </n-collapse-item>
             <n-collapse-item title="Execution Process" name="3">
-              <n-flex vertical>
-                <n-h3 style="margin-left: 24px;margin-bottom: 10px;">
-                  Elapsed Time (naive/opt): {{ naive_exec }}s/{{ opt_exec }}s
-                </n-h3>
-                <n-flex>
+              <n-h3 style="margin-left: 24px; margin-bottom: 10px">
+                Elapsed Time (naive/opt): {{ naive_exec }}s/{{ opt_exec }}s
+              </n-h3>
+              <n-grid x-gap="12" :cols="2">
+                <n-gi>
                   <n-card id="plan" title="Naive Execution">
                     <ExecutionProcess></ExecutionProcess>
                   </n-card>
+                </n-gi>
+                <n-gi>
                   <n-card id="plan" title="Optimized Execution">
                     <ExecutionProcess></ExecutionProcess>
                   </n-card>
-                </n-flex>
-              </n-flex>
+                </n-gi>
+              </n-grid>
+              <n-card title="Batch Size Comparison"> </n-card>
+              <n-card title="Predition Time Comparison"> </n-card>
             </n-collapse-item>
             <n-collapse-item title="Result Set" name="4">
               <ResultSet />
@@ -168,8 +192,8 @@ const handleClick = () => {
 };
 
 const handleReset = () => {
-  code = analysis.naive.function
-  rewrite_code = analysis.opt.function
+  code = analysis.naive.function;
+  rewrite_code = analysis.opt.function;
   console.log(udf_plan_n.value.setVal(code));
   console.log(udf_plan_o.value.setVal(rewrite_code));
 };
@@ -181,8 +205,5 @@ const handleReset = () => {
   margin-left: 5px;
   padding: 5px;
   font-weight: bold;
-}
-#plan {
-  max-width: 465px;
 }
 </style>

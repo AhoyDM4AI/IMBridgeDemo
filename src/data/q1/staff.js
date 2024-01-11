@@ -54,7 +54,7 @@ data = np.split(data, np.array([8]), axis = 1)
 numerical = data[0]
 categorical = data[1]
 X = np.hstack((scaler.transform(numerical), enc.transform(categorical).toarray()))
-return model.predict(X)"`,
+return model.predict(X)`,
     plan: {},
     exec: [{ no: 1, bs: 213, t: 3.2 }],
     result_cols: [{ title: "col1_name", key: "col1" }],
