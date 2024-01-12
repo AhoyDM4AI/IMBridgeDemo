@@ -1,4 +1,5 @@
 import './assets/main.css'
+import * as echarts from 'echarts'
 
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -11,3 +12,4 @@ app.use(router)
 app.use(naive)
 
 app.mount('#app')
+app.config.globalProperties.$echarts = echarts

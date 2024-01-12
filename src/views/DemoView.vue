@@ -136,7 +136,9 @@
                   </n-card>
                 </n-gi>
               </n-grid>
-              <n-card title="Batch Size Comparison"> </n-card>
+              <n-card title="Batch Size Comparison"> 
+                <ExecutionChar :charData="{x:['a','b'],y:[1,2],titleText:'hello'}" ></ExecutionChar>
+              </n-card>
               <n-card title="Predition Time Comparison"> </n-card>
             </n-collapse-item>
             <n-collapse-item title="Result Set" name="4">
@@ -153,6 +155,7 @@
 import ResultSet from "../components/ResultSet.vue";
 import CodeEditor from "../components/CodeEditor.vue";
 import ExecutionProcess from "../components/ExecutionProcess.vue";
+import ExecutionChar from "@/components/ExecutionChar.vue";
 import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
 import { input, analysis } from "../data/q1/staff";
