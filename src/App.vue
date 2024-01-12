@@ -12,7 +12,7 @@ import { RouterLink, RouterView } from "vue-router";
           <n-layout-content bordered>
             <RouterView/>
           </n-layout-content>
-          <n-layout-footer bordered><center>IMPEX DEMO</center></n-layout-footer>
+          <n-layout-footer bordered style="text-align: center;">IMPEX DEMO</n-layout-footer>
     </n-layout>
     </n-config-provider>
   </div>

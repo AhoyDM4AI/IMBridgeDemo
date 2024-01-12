@@ -9,7 +9,7 @@ import "./ace/ace";
 import "./ace/mode-python";
 import "./ace/mode-sql";
 import "./ace/theme-chrome";
-import { defineComponent, ref, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 
 const props = defineProps({
   lines: Number,
@@ -24,7 +24,6 @@ onMounted(() => {
   init();
 });
 const init = () => {
-console.log(props)
   aceEditor = ace.edit(aceDom.value);
   aceEditor.setOptions({
     autoScrollEditorIntoView: true,

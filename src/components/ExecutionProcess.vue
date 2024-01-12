@@ -14,9 +14,10 @@
   </n-layout>
 </template>
 
-<script lang="js">
-import { defineComponent, ref } from 'vue'
-
+<script setup>
+const props = defineProps({
+    data: Array,
+})
 const createColumns = () => {
   return [
     {
@@ -34,26 +35,9 @@ const createColumns = () => {
   ]
 }
 
-export default defineComponent({
-  setup () {
-    return {
-      data: ref([
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
-        {no: 'Name', bs:"address", t:"tags"},
 
-      ]),
-      columns: createColumns()
-    }
-  }
-})
+const columns = createColumns()
+
 </script>
 
 <style scoped lang="scss">
