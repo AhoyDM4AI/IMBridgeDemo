@@ -6,8 +6,11 @@
           size="small"
           :columns="columns"
           :data="data"
-          :max-height="200"
+          :max-height="400"
           :scroll-x="500"
+          :pagination="{
+            pageSize: 10,
+          }"
         />
       </div>
     </n-layout-content>

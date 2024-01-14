@@ -6,8 +6,11 @@
           size="small"
           :columns="columns"
           :data="data"
-          :max-height="200"
+          :max-height="300"
           :scroll-x="500"
+          :pagination="{
+            pageSize: 10,
+          }"
         />
       </div>
     </n-layout-content>
@@ -16,28 +19,30 @@
 
 <script setup>
 const props = defineProps({
-    data: Array,
-})
+  data: Array,
+});
 const createColumns = () => {
   return [
     {
-      title: 'Iteration Number',
-      key: 'no'
+      title: "Iteration",
+      key: "no",
     },
     {
-      title: 'Batch Size',
-      key: 'bs'
+      title: "Batch Size",
+      key: "bs",
     },
     {
-      title: 'time',
-      key: 't'
+      title: "Time (ms)",
+      key: "t",
     },
-  ]
-}
+    {
+      title: "Efficiency\n(row/ms)",
+      key: "ef",
+    },
+  ];
+};
 
-
-const columns = createColumns()
-
+const columns = createColumns();
 </script>
 
 <style scoped lang="scss">

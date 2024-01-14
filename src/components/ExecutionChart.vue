@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref,onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import * as echarts from "echarts";
 
 const props = defineProps({
@@ -31,24 +31,25 @@ const reDraw = (chartData) => {
     },
     yAxis: {
       name: props.yName,
-      type: "log",
-      logBase: 10,
+      //type: "log",
+      // logBase: 10,
     },
     legend: {
-    // Try 'horizontal'
-    orient: 'horizontal',
-    top: 'top',
-  },
+      // Try 'horizontal'
+      orient: "horizontal",
+      top: "top",
+      //left: 160
+    },
     series: [
       {
         name: "naive",
         data: chartData.y1,
-        type: "line",
+        type: "bar",
       },
       {
-        name :"optimized",
+        name: "optimized",
         data: chartData.y2,
-        type: "line",
+        type: "bar",
       },
     ],
   };
