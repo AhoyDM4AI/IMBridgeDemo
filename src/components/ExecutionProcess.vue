@@ -6,8 +6,6 @@
           size="small"
           :columns="columns"
           :data="data"
-          :max-height="300"
-          :scroll-x="500"
           :pagination="{
             pageSize: 10,
           }"

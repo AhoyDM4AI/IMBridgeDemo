@@ -5,10 +5,10 @@
 </template>
 
 <script setup>
-import "./ace/ace";
-import "./ace/mode-python";
-import "./ace/mode-sql";
-import "./ace/theme-chrome";
+import "../assets/ace/ace";
+import "../assets/ace/mode-python";
+import "../assets/ace/mode-sql";
+import "../assets/ace/theme-chrome";
 import {ref, onMounted} from "vue";
 
 const props = defineProps({

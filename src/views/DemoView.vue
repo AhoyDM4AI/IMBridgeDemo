@@ -108,12 +108,12 @@
               <n-grid x-gap="12" :cols="2">
                 <n-gi>
                   <n-card id="plan" title="Naive Plan:">
-                    <PlanTree />
+                    <PlanTree content="naive_plan" ref="naive_tree" />
                   </n-card>
                 </n-gi>
                 <n-gi>
                   <n-card id="plan" title="Optimized Plan:">
-                    <PlanTree />
+                    <PlanTree content="opt_plan" :isOpt="true" ref="opt_tree" />
                   </n-card>
                 </n-gi>
               </n-grid>
@@ -136,21 +136,21 @@
                   </n-card>
                 </n-gi>
               </n-grid>
-              <n-card title="Batch Size Comparison">
+              <n-card class=”chart title="Batch Size Comparison">
                 <ExecutionChart
                   chart_id="batch"
                   ref="batch_chart"
                   yName="Batch Size"
                 ></ExecutionChart>
               </n-card>
-              <n-card title="Predition Time Comparison">
+              <n-card class=”chart title="Predition Time Comparison">
                 <ExecutionChart
                   chart_id="timing"
                   yName="Prediction Time (ms)"
                   ref="time_chart"
                 ></ExecutionChart>
               </n-card>
-              <n-card title="Predition Efficiency Comparison">
+              <n-card class=”chart title="Predition Efficiency Comparison">
                 <ExecutionChart
                   chart_id="efficient"
                   yName="Prediction Efficiency(row/ms)"
@@ -176,6 +176,7 @@ import ExecutionChart from "@/components/ExecutionChart.vue";
 import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
 import { q1 } from "../data/q1/staff";
+import { q2 } from "../data/q2/staff";
 
 const query_editor = ref(null);
 const udf_editor = ref(null);
@@ -196,6 +197,12 @@ let opt_exec = ref(0);
 
 let code = "",
   rewrite_code = "";
+
+const naive_tree = ref();
+const opt_tree = ref();
+
+let naive_tree_data = null;
+let opt_tree_data = null;
 
 let batch_chart_data = null;
 let time_chart_data = null;
@@ -234,6 +241,12 @@ const reRender = () => {
   if (efficient_chart.value) {
     efficient_chart.value.reDraw(efficient_chart_data);
   }
+  if(naive_tree.value){
+    naive_tree.value.Draw(naive_tree_data);
+  }
+  if(opt_tree.value){
+    opt_tree.value.Draw(opt_tree_data);
+  }
 };
 
 const extractChartData = (rawData1, rawData2, colName) => {
@@ -253,7 +266,7 @@ const extractChartData = (rawData1, rawData2, colName) => {
     x1_data.length < x2_data.length ? x1_data.length : x2_data.length;
   win_len = win_len <= 50 ? win_len : 50;
   return {
-    x: x2_data.slice(0, win_len),
+    x: x1_data.slice(0, win_len),
     y1: y1_data,
     y2: y2_data,
     titleText: "",
@@ -282,11 +295,16 @@ const handleClick = () => {
     // set code data here.
     code = base.function;
     rewrite_code = comp.function;
+
+    //set tree data here.
+    naive_tree_data = base.plan;
+    opt_tree_data = comp.plan;
+
     // set total time here.
     naive_exec.value = Number(base.total).toFixed(2);
     opt_exec.value = Number(comp.total).toFixed(2);
-    // set chart data here.
 
+    // set chart data here.
     base.exec = base.exec.map((x) => {
       return { no: x.no, t: x.t, bs: x.bs, ef: (x.bs / x.t).toFixed(2) };
     });
@@ -314,5 +332,8 @@ const handleClick = () => {
   margin-left: 5px;
   padding: 5px;
   font-weight: bold;
+}
+.chart {
+  text-align: center;
 }
 </style>
