@@ -7,56 +7,76 @@
           :width="443"
           style="background: rgb(234, 238, 243)"
         >
-          <div>
-            <h2 id="title">Query Editor</h2>
-            <CodeEditor
-              :lines="10"
-              :lang="'sql'"
-              :readonly="false"
-              fontsize="12"
-              ref="query_editor"
-            />
-          </div>
-          <n-divider />
-          <div>
-            <h2 id="title">Function Editor</h2>
-            <CodeEditor
-              :lines="20"
-              :lang="'python'"
-              :readonly="false"
-              fontsize="12"
-              ref="udf_editor"
-            />
-            <div style="padding: 3px; padding-top: 8px">
-              <n-flex justify="end">
-                <div style="display: flex; align-items: center">
-                  <n-grid :y-gap="8" :x-gap="4" :cols="2">
-                    <n-gi>
-                      <n-checkbox
-                        v-model:checked="rewrite_on"
-                        label="Function Rewrite"
-                      />
-                    </n-gi>
-                    <n-gi>
-                      <n-checkbox
-                        v-model:checked="adaptive_on"
-                        label="Adaptive Batching"
-                      />
-                    </n-gi>
-                  </n-grid>
-                </div>
+          <n-grid y-gap="6" :cols="1">
+            <n-gi style="padding-top: 8px">
+              <h2 id="title">Settings</h2>
+              <n-flex style="padding-left: 30px; padding-top: 5px" justify="space-between">
+                <n-grid :cols="3" :x-gap="12">
+                  <n-gi :span="2">
+                    <n-select 
+                      v-model:value="selectedValues" 
+                      size="medium"
+                      placeholder="Select Prediction Query"
+                      :options="options"
+                    />
+                  </n-gi>
+                  <n-gi :span="1">
+                    <n-button
+                      type="info"
+                      size="medium"
+                      :disabled="loading"
+                      @click="handleClick"
+                      >Deploy & Run</n-button
+                    >
+                  </n-gi>
+                </n-grid>
+                <n-flex justify="left" style="padding-top: 3px">
+                  <n-switch 
+                    :rail-style="railStyle"
+                    v-model:value="activeSwitch"
+                    @update:value="handleSwitch"
+                  >
+                    <template #checked>
+                      IMBridge
+                    </template>
+                    <template #unchecked>
+                      Vanilla
+                    </template>
+                  </n-switch>
+                  <n-checkbox
+                    v-model:checked="rewrite_on"
+                    :disabled="offCheckbox"
+                    label="Function Rewrite"
+                  />
+                  <n-checkbox
+                    v-model:checked="adaptive_on"
+                    :disabled="offCheckbox"
+                    label="Adaptive Batching"
+                  />
+                </n-flex>
               </n-flex>
-              <n-flex justify="end" style="padding: 10px">
-                <n-button
-                  type="info"
-                  size="medium"
-                  :disabled="loading"
-                  @click="handleClick"
-                  >Deploy&Run</n-button
-                >
-              </n-flex>
-            </div>
-          </div>
+            </n-gi>
+            <n-gi>
+              <h2 id="title">SQL Editor</h2>
+              <CodeEditor
+                :lines="15"
+                :lang="'sql'"
+                :readonly="false"
+                fontsize="12"
+                ref="query_editor"
+              />
+            </n-gi>
+            <n-gi>
+              <h2 id="title">Function Editor</h2>
+              <CodeEditor
+                :lines="25"
+                :lang="'python'"
+                :readonly="false"
+                fontsize="12"
+                ref="udf_editor"
+              />
+            </n-gi>
+          </n-grid>
         </n-layout-sider>
         <n-divider vertical style="margin-left: 4px; margin-right: 0" />
         <n-layout-content
@@ -74,8 +94,8 @@
             <n-collapse-item title="Prediction Function Code" name="1">
               <n-grid x-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="plan" title="Naive Code:">
-                    <n-image width="80" src="/src/assets/all.svg" />
+                  <n-card id="plan" title="Original Code:">
+                    <!--<n-image width="80" src="/src/assets/all.svg" />-->
                     <CodeEditor
                       :lines="15"
                       :lang="'python'"
@@ -87,12 +107,12 @@
                 </n-gi>
                 <n-gi>
                   <n-card id="plan" title="Rewritten Code:">
-                    <n-image
+                    <!--<n-image
                       v-if="rewrite_on"
                       width="53"
                       src="/src/assets/rewrite.svg"
                     />
-                    <n-image v-else width="80" src="/src/assets/all.svg" />
+                    <n-image v-else width="80" src="/src/assets/all.svg" />-->
                     <CodeEditor
                       :lines="15"
                       :lang="'python'"
@@ -107,7 +127,7 @@
             <n-collapse-item title="Prediction Query Plan" name="2">
               <n-grid x-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="plan" title="Naive Plan:">
+                  <n-card id="plan" title="Original Plan:">
                     <PlanTree content="naive_plan" ref="naive_tree" />
                   </n-card>
                 </n-gi>
@@ -120,7 +140,7 @@
             </n-collapse-item>
             <n-collapse-item title="Execution Process" name="3">
               <n-h3 style="margin-left: 12px; margin-bottom: 10px">
-                Total Elapsed Time (naive/opt): {{ naive_exec }}s/{{
+                Total Elapsed Time (origin/opt): {{ naive_exec }}s/{{
                   opt_exec
                 }}s
               </n-h3>
@@ -159,7 +179,18 @@
               </n-card>
             </n-collapse-item>
             <n-collapse-item title="Result Set" name="4">
-              <ResultSet :columns="results_columns" :data="results" />
+              <n-grid x-gap="12" y-gap="12" :cols="2">
+                <n-gi>
+                  <n-card id="result" title="Vanilla Results">
+                    <ResultSet :columns="vanilla_results_columns" :data="vanilla_results" />
+                  </n-card>
+                </n-gi>
+                <n-gi>
+                  <n-card id="result" title="IMBridge Results">
+                    <ResultSet :columns="IMBridge_results_columns" :data="IMBridge_results" />
+                  </n-card>
+                </n-gi>
+              </n-grid>
             </n-collapse-item>
           </n-collapse>
         </n-layout-content>
@@ -176,7 +207,7 @@ import ExecutionChart from "@/components/ExecutionChart.vue";
 import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
 import { q1 } from "../data/q1/staff";
-import { q2 } from "../data/q2/staff";
+//import { q2 } from "../data/q2/staff";
 
 const query_editor = ref(null);
 const udf_editor = ref(null);
@@ -187,8 +218,14 @@ const batch_chart = ref(null);
 const time_chart = ref(null);
 const efficient_chart = ref(null);
 
+let activeSwitch = ref(false);
+let offCheckbox = ref(true);
+
 let rewrite_on = ref(false);
 let adaptive_on = ref(false);
+
+let vanilla_show = ref(false);
+let IMBridge_show = ref(false);
 
 let loading = ref(false);
 
@@ -211,10 +248,47 @@ let efficient_chart_data = null;
 const exec_process_n = ref([]);
 const exec_process_o = ref([]);
 
-const results_columns = ref([]);
-const results = ref([]);
+const vanilla_results_columns = ref([]);
+const IMBridge_results_columns = ref([]);
+const vanilla_results = ref([]);
+const IMBridge_results = ref([]);
 
 const showedQuery = q1;
+
+// select component options.
+const options = [
+{
+  label: "User Define (Custom)",
+  value: 'query0'
+},
+{
+  label: 'Expedia Qeury With Sklearn',
+  value: 'query1'
+},
+{
+  label: 'Expedia Qeury With ONNX',
+  value: 'query2'
+}];
+
+// switch color setting
+const railStyle = ({
+  focused,
+  checked
+}) => {
+  const style = {};
+  if (checked) {
+    style.background = "#3da0ff";
+    if (focused) {
+      style.boxShadow = "0 0 0 2px #3da0ff40";
+    }
+  } else {
+    style.background = "#ff9500";
+    if (focused) {
+      style.boxShadow = "0 0 0 2px #ff950040";
+    }
+  }
+  return style;
+};
 
 onMounted(() => {
   query_editor.value.setVal(showedQuery.input.query);
@@ -222,30 +296,36 @@ onMounted(() => {
 });
 
 const reRender = () => {
-  if (udf_plan_n.value) {
+  if (!activeSwitch.value && udf_plan_n.value) {
     udf_plan_n.value.setVal(code);
   }
-  if (udf_plan_o.value) {
+  if (activeSwitch.value && udf_plan_o.value) {
     if (rewrite_on.value) {
       udf_plan_o.value.setVal(rewrite_code);
     } else {
       udf_plan_o.value.setVal(code);
     }
   }
-  if (time_chart.value) {
-    time_chart.value.reDraw(time_chart_data);
+  if (vanilla_show.value && IMBridge_show.value) {
+    if (time_chart.value) {
+      time_chart.value.reDraw(time_chart_data);
+    }
+    if (batch_chart.value) {
+      batch_chart.value.reDraw(batch_chart_data);
+    }
+    if (efficient_chart.value) {
+      efficient_chart.value.reDraw(efficient_chart_data);
+    }
   }
-  if (batch_chart.value) {
-    batch_chart.value.reDraw(batch_chart_data);
-  }
-  if (efficient_chart.value) {
-    efficient_chart.value.reDraw(efficient_chart_data);
-  }
-  if(naive_tree.value){
+  if(!activeSwitch.value && naive_tree.value){
     naive_tree.value.Draw(naive_tree_data);
   }
-  if(opt_tree.value){
-    opt_tree.value.Draw(opt_tree_data);
+  if(activeSwitch.value && opt_tree.value){
+    if (adaptive_on.value) {
+      opt_tree.value.Draw(opt_tree_data);
+    } else {
+      opt_tree.value.Draw(naive_tree_data);
+    }
   }
 };
 
@@ -291,19 +371,26 @@ const handleClick = () => {
         }
       }
     }
+    
+    if (!activeSwitch.value) 
+      vanilla_show.value = true;
+    else
+      IMBridge_show.value = true;
 
     // set code data here.
     code = base.function;
     rewrite_code = comp.function;
-
+    
     //set tree data here.
     naive_tree_data = base.plan;
     opt_tree_data = comp.plan;
 
     // set total time here.
-    naive_exec.value = Number(base.total).toFixed(2);
-    opt_exec.value = Number(comp.total).toFixed(2);
-
+    if (!activeSwitch.value)
+      naive_exec.value = Number(base.total).toFixed(2);
+    else
+      opt_exec.value = Number(comp.total).toFixed(2);
+    
     // set chart data here.
     base.exec = base.exec.map((x) => {
       return { no: x.no, t: x.t, bs: x.bs, ef: (x.bs / x.t).toFixed(2) };
@@ -315,15 +402,28 @@ const handleClick = () => {
     time_chart_data = extractChartData(base.exec, comp.exec, "t");
     efficient_chart_data = extractChartData(base.exec, comp.exec, "ef");
     // set execution process here
-    exec_process_n.value = base.exec;
-    exec_process_o.value = comp.exec;
+    if (!activeSwitch.value)
+      exec_process_n.value = base.exec;
+    else
+      exec_process_o.value = comp.exec;
 
     // set result set here
-    results_columns.value = q1.result_set.result_cols;
-    results.value = q1.result_set.result_rows;
+    if (!activeSwitch.value) {
+      vanilla_results_columns.value = q1.result_set.result_cols;
+      vanilla_results.value = q1.result_set.result_rows;
+    } else {
+      IMBridge_results_columns.value = q1.result_set.result_cols;
+      IMBridge_results.value = q1.result_set.result_rows;
+    }
     reRender();
-  }, 5000);
+  }, 2000);
 };
+
+
+const handleSwitch = (value) => {
+  offCheckbox = !value;
+};
+
 </script>
 
 <style scoped>

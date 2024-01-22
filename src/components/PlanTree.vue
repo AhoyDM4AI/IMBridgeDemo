@@ -6,10 +6,12 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import * as jQuery from "../assets/libd3/jquery-1.9.1.min";
+import "../assets/libd3/jquery-1.9.1.min";
+import "../assets/libd3/tipsy"
 import * as d3 from "d3";
-import * as tipsy from "../assets/libd3/tipsy";
 import dagreD3 from "dagre-d3";
+
+import "/src/assets/libd3/tipsy.css"
 
 const props = defineProps({
   content: String,
@@ -24,7 +26,7 @@ onMounted(() => {
 let d = {
   nodes: [
     { id: 6, label: "RESULT", mark: 0, float: "result set." },
-    { id: 5, label: "PREDICT OP", mark: 0, float: "" },
+    { id: 5, label: "PREDICT OP", mark: 0, float: "predict function: predict" },
     {
       id: 0,
       label: "HASH JOIN",
@@ -142,7 +144,6 @@ const extractDataset = (plan_data) => {
 };
 
 const Draw = (plan_data) => {
-  props.isOpt = !props.isOpt;
   let dataset = extractDataset(plan_data);
   let g = new dagreD3.graphlib.Graph();
   g.setGraph({
@@ -167,7 +168,7 @@ const Draw = (plan_data) => {
         float: item.float,
         mark: item.mark,
 
-        style: "fill:#8f7b7b; stroke:#d4a5a5", //节点样式,可设置节点的颜色填充、节点边框
+        style: "fill:#bfd4f3; stroke:#000", //节点样式,可设置节点的颜色填充、节点边框
         labelStyle:
           "fill: #000; font-weight: 550; font-family: sans-serif; font-size: 20px", //节点标签样式, 可设置节点标签的文本样式（颜色、粗细、大小）
         rx: 12, // 设置圆角
@@ -190,7 +191,7 @@ const Draw = (plan_data) => {
         float: item.float,
         mark: item.mark,
 
-        style: "fill:#fff; stroke:#d4a5a5", //节点样式,可设置节点的颜色填充、节点边框
+        style: "fill:#fff; stroke:#000", //节点样式,可设置节点的颜色填充、节点边框
         labelStyle:
           "fill: #000; font-weight: 550; font-family: sans-serif; font-size: 20px", //节点标签样式, 可设置节点标签的文本样式（颜色、粗细、大小）
         rx: 12, // 设置圆角
@@ -249,14 +250,15 @@ const Draw = (plan_data) => {
   // Run the renderer. This is what draws the final graph.
   render(svgGroup, g);
 
-  /*svgGroup
+  svgGroup
     .selectAll("g.node")
     .attr("title", function (v) {
       return styleTooltip(g.node(v).label, g.node(v).float);
     })
     .each(function (v) {
+      console.log($(this).tipsy)
       $(this).tipsy({ gravity: "w", opacity: 1, html: true });
-    });*/
+    });
 
   // Center the graph
   let initialScale = 0.7;
@@ -275,7 +277,7 @@ defineExpose({
 });
 </script>
 
-<style src="/src/assets/libd3/tipsy.css" scoped>
+<style scoped>
 /* This styles the title of the tooltip */
 .tipsy .name {
   font-size: 1.5em;
