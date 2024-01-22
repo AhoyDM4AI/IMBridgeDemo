@@ -23,124 +23,39 @@ const sp = "PREDICT OP";
 onMounted(() => {
   //Draw();
 });
-let d = {
-  nodes: [
-    { id: 6, label: "RESULT", mark: 0, float: "result set." },
-    { id: 5, label: "PREDICT OP", mark: 0, float: "predict function: predict" },
-    {
-      id: 0,
-      label: "HASH JOIN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([l.prop_id], [l.price_usd], [h.count_bookings], [h.count_clicks])",
-    },
-    {
-      id: 1,
-      label: "HASH JOIN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([l.prop_id], [l.price_usd], [h.count_bookings], [h.count_clicks], [l.srch_id], [l.prop_location_score1], [l.prop_location_score2],[l.prop_log_historical_price], [l.orig_destination_distance], [l.position], [h.prop_review_score], [h.avg_bookings_usd], [h.stdev_bookings_usd], [h.prop_country_id],[h.prop_starrating], [h.prop_brand_bool])",
-    },
-    {
-      id: 2,
-      label: "TABLE SCAN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([l.prop_id], [l.srch_id], [l.prop_location_score1], [l.prop_location_score2], [l.prop_log_historical_price], [l.price_usd], [l.orig_destination_distance],[l.position])",
-    },
-    {
-      id: 3,
-      label: "TABLE SCAN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([h.prop_id], [h.prop_review_score], [h.avg_bookings_usd], [h.stdev_bookings_usd], [h.prop_country_id], [h.prop_starrating], [h.prop_brand_bool],[h.count_clicks], [h.count_bookings])",
-    },
-    {
-      id: 4,
-      label: "TABLE SCAN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([s.srch_id], [s.year], [s.month], [s.weekofyear], [s.time], [s.site_id], [s.visitor_location_country_id], [s.srch_destination_id],[s.srch_length_of_stay], [s.srch_booking_window], [s.srch_adults_count], [s.srch_children_count], [s.srch_room_count], [s.srch_saturday_night_bool], [s.random_bool])",
-    },
-  ],
-  edges: [
-    { source: 3, target: 1, label: "" },
-    { source: 2, target: 1, label: "" },
-
-    { source: 4, target: 0, label: "" },
-    { source: 1, target: 0, label: "" },
-
-    { source: 0, target: 5, label: "" },
-    { source: 5, target: 6, label: "" },
-  ],
-};
-
-let d2 = {
-  nodes: [
-    { id: 5, label: "RESULT", mark: 0, float: "result set." },
-    {
-      id: 0,
-      label: "HASH JOIN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([l.prop_id], [l.price_usd], [h.count_bookings], [h.count_clicks])",
-    },
-    {
-      id: 1,
-      label: "HASH JOIN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([l.prop_id], [l.price_usd], [h.count_bookings], [h.count_clicks], [l.srch_id], [l.prop_location_score1], [l.prop_location_score2],[l.prop_log_historical_price], [l.orig_destination_distance], [l.position], [h.prop_review_score], [h.avg_bookings_usd], [h.stdev_bookings_usd], [h.prop_country_id],[h.prop_starrating], [h.prop_brand_bool])",
-    },
-    {
-      id: 2,
-      label: "TABLE SCAN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([l.prop_id], [l.srch_id], [l.prop_location_score1], [l.prop_location_score2], [l.prop_log_historical_price], [l.price_usd], [l.orig_destination_distance],[l.position])",
-    },
-    {
-      id: 3,
-      label: "TABLE SCAN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([h.prop_id], [h.prop_review_score], [h.avg_bookings_usd], [h.stdev_bookings_usd], [h.prop_country_id], [h.prop_starrating], [h.prop_brand_bool],[h.count_clicks], [h.count_bookings])",
-    },
-    {
-      id: 4,
-      label: "TABLE SCAN",
-      mark: 1,
-      shape: "rect",
-      float:
-        "output([s.srch_id], [s.year], [s.month], [s.weekofyear], [s.time], [s.site_id], [s.visitor_location_country_id], [s.srch_destination_id],[s.srch_length_of_stay], [s.srch_booking_window], [s.srch_adults_count], [s.srch_children_count], [s.srch_room_count], [s.srch_saturday_night_bool], [s.random_bool])",
-    },
-  ],
-  edges: [
-    { source: 3, target: 1, label: "" },
-    { source: 2, target: 1, label: "" },
-
-    { source: 4, target: 0, label: "" },
-    { source: 1, target: 0, label: "" },
-
-    { source: 0, target: 5, label: "" },
-  ],
-};
 
 const extractDataset = (plan_data) => {
-  if (props.isOpt) {
-    return d;
-  } else {
-    return d2;
+  // 将OB json转换为Graph json
+  let plan = {'nodes': [], 'edges': []};
+  let root = transOBjson(plan, plan_data);
+  plan.nodes.push(root);
+  let result_node = {'id': -1, 'label': 'RESULT', 'mark': 0, "float": 'result set.'};
+  let result_edge = {'source': root['id'], 'target': result_node['id'], label: ""};
+  plan.nodes.push(result_node);
+  plan.edges.push(result_edge);
+  return plan;
+};
+
+const transOBjson = (plan, src) => {
+  let dst = {};
+  dst['id'] = src['ID'];
+  dst['label'] = src['OPERATOR'];
+  dst['mark'] = 1;
+  dst['shape'] = "rect";
+  dst['float'] = src['output'];
+  if(src['CHILD_1']) {
+    let node = transOBjson(plan, src['CHILD_1']);
+    let edge = {'source': node['id'], 'target': dst['id'], label: ""};
+    plan.nodes.push(node);
+    plan.edges.push(edge);
   }
+  if(src['CHILD_2']) {
+    let node = transOBjson(plan, src['CHILD_2']);
+    let edge = {'source': node['id'], 'target': dst['id'], label: ""};
+    plan.nodes.push(node);
+    plan.edges.push(edge);
+  }
+  return dst;
 };
 
 const Draw = (plan_data) => {

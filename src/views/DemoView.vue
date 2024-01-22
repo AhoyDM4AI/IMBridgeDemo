@@ -37,10 +37,10 @@
                     @update:value="handleSwitch"
                   >
                     <template #checked>
-                      IMBridge
+                      <p style="color:black">IMBridge</p>
                     </template>
                     <template #unchecked>
-                      OceanBase
+                      <p style="color:black">OceanBase</p>
                     </template>
                   </n-switch>
                   <n-checkbox
@@ -207,7 +207,7 @@ import ExecutionChart from "@/components/ExecutionChart.vue";
 import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
 import { q1 } from "../data/q1/staff";
-//import { q2 } from "../data/q2/staff";
+import { q2 } from "../data/q2/staff";
 
 const query_editor = ref(null);
 const udf_editor = ref(null);
@@ -253,7 +253,7 @@ const IMBridge_results_columns = ref([]);
 const vanilla_results = ref([]);
 const IMBridge_results = ref([]);
 
-const showedQuery = q1;
+const showedQuery = q2;
 
 // select component options.
 const options = [
@@ -284,7 +284,7 @@ const railStyle = ({
   } else {
     style.background = "#42b983";
     if (focused) {
-      style.boxShadow = "0 0 0 2px #ff950040";
+      style.boxShadow = "0 0 0 2px #42b98340";
     }
   }
   return style;
