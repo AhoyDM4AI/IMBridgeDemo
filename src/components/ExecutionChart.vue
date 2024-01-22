@@ -42,12 +42,12 @@ const reDraw = (chartData) => {
     },
     series: [
       {
-        name: "naive",
+        name: "OceanBase",
         data: chartData.y1,
         type: "bar",
       },
       {
-        name: "optimized",
+        name: "IMBridge",
         data: chartData.y2,
         type: "bar",
       },

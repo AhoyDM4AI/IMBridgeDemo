@@ -1,5 +1,5 @@
-# IMPEXDemo
-Repo of IMPEX Demonstration: IMPEX: An In-Database Prediction Query System Towards Impedance Mismatch Mitigation.
+# IMPBridgeDemo
+Repo of IMBridge Demonstration: IMBridge: Impedance Mismatch Mitigation between Database Engine and Prediction Query Execution.
 
 Web Based UI use vue3 and naive UI for development.
 

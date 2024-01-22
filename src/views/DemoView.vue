@@ -4,7 +4,7 @@
       <n-layout has-sider>
         <n-layout-sider
           bordered
-          :width="443"
+          :width="475"
           style="background: rgb(234, 238, 243)"
         >
           <n-grid y-gap="6" :cols="1">
@@ -40,7 +40,7 @@
                       IMBridge
                     </template>
                     <template #unchecked>
-                      Vanilla
+                      OceanBase
                     </template>
                   </n-switch>
                   <n-checkbox
@@ -69,7 +69,7 @@
             <n-gi>
               <h2 id="title">Function Editor</h2>
               <CodeEditor
-                :lines="25"
+                :lines="22"
                 :lang="'python'"
                 :readonly="false"
                 fontsize="12"
@@ -94,7 +94,7 @@
             <n-collapse-item title="Prediction Function Code" name="1">
               <n-grid x-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="plan" title="Original Code:">
+                  <n-card id="plan" title="OceanBase Original Code:">
                     <!--<n-image width="80" src="/src/assets/all.svg" />-->
                     <CodeEditor
                       :lines="15"
@@ -106,7 +106,7 @@
                   </n-card>
                 </n-gi>
                 <n-gi>
-                  <n-card id="plan" title="Rewritten Code:">
+                  <n-card id="plan" title="IMBridge Rewritten Code:">
                     <!--<n-image
                       v-if="rewrite_on"
                       width="53"
@@ -127,12 +127,12 @@
             <n-collapse-item title="Prediction Query Plan" name="2">
               <n-grid x-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="plan" title="Original Plan:">
+                  <n-card id="plan" title="OceanBase Plan:">
                     <PlanTree content="naive_plan" ref="naive_tree" />
                   </n-card>
                 </n-gi>
                 <n-gi>
-                  <n-card id="plan" title="Optimized Plan:">
+                  <n-card id="plan" title="IMBridge Plan:">
                     <PlanTree content="opt_plan" :isOpt="true" ref="opt_tree" />
                   </n-card>
                 </n-gi>
@@ -146,12 +146,12 @@
               </n-h3>
               <n-grid x-gap="12" y-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="plan" title="Naive Execution">
+                  <n-card id="plan" title="OceanBase Execution">
                     <ExecutionProcess :data="exec_process_n"></ExecutionProcess>
                   </n-card>
                 </n-gi>
                 <n-gi>
-                  <n-card id="plan" title="Optimized Execution">
+                  <n-card id="plan" title="IMBridge Execution">
                     <ExecutionProcess :data="exec_process_o"></ExecutionProcess>
                   </n-card>
                 </n-gi>
@@ -181,7 +181,7 @@
             <n-collapse-item title="Result Set" name="4">
               <n-grid x-gap="12" y-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="result" title="Vanilla Results">
+                  <n-card id="result" title="OceanBase Results">
                     <ResultSet :columns="vanilla_results_columns" :data="vanilla_results" />
                   </n-card>
                 </n-gi>
