@@ -59,7 +59,7 @@
             <n-gi>
               <h2 id="title">SQL Editor</h2>
               <CodeEditor
-                :lines="15"
+                :lines="5"
                 :lang="'sql'"
                 :readonly="false"
                 fontsize="12"
@@ -276,13 +276,13 @@ const railStyle = ({
   checked
 }) => {
   const style = {};
-  if (checked) {
+  if (!checked) {
     style.background = "#3da0ff";
     if (focused) {
       style.boxShadow = "0 0 0 2px #3da0ff40";
     }
   } else {
-    style.background = "#ff9500";
+    style.background = "#42b983";
     if (focused) {
       style.boxShadow = "0 0 0 2px #ff950040";
     }
