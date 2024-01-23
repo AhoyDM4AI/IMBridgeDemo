@@ -274,15 +274,15 @@ const handleSelect = (value, option) => {
 // select component options.
 const options = [
 {
-  label: 'Expedia Qeury With Sklearn',
+  label: 'Expedia Query With Sklearn',
   value: 'query1'
 },
 {
-  label: 'Expedia Qeury With PyTorch',
+  label: 'Expedia Query With PyTorch',
   value: 'query2'
 },
 {
-  label: 'Expedia Qeury With ONNX',
+  label: 'Expedia Query With ONNX',
   value: 'query3'
 },
 {
