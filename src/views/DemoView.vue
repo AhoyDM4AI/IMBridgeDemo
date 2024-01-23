@@ -362,11 +362,8 @@ const extractChartData = (rawData1, rawData2, colName) => {
     x2_data.push(rawData2[i].no);
     y2_data.push(rawData2[i][colName]);
   }
-  let win_len =
-    x1_data.length < x2_data.length ? x1_data.length : x2_data.length;
-  win_len = win_len <= 50 ? win_len : 50;
   return {
-    x: x1_data.slice(0, win_len),
+    x: x1_data,
     y1: y1_data,
     y2: y2_data,
     titleText: "",
