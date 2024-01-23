@@ -206,9 +206,9 @@ import ExecutionProcess from "../components/ExecutionProcess.vue";
 import ExecutionChart from "@/components/ExecutionChart.vue";
 import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
-import { q1 } from "../data/q1/staff";
-import { q2 } from "../data/q2/staff";
-import { q3 } from "../data/q3/staff";
+//import { q1 } from "../data/q1/staff";
+//import { q2 } from "../data/q2/staff";
+//import { q3 } from "../data/q3/staff";
 
 const query_editor = ref(null);
 const udf_editor = ref(null);
@@ -256,7 +256,7 @@ const IMBridge_results = ref([]);
 
 let showedQuery = null; // default
 
-const queryMap = {'query1': q1, 'query2': q2, 'query3': q3};
+const queryMap = {'query1': 'q1', 'query2': 'q2', 'query3': 'q3'};
 
 // select prediction query
 const handleSelect = (value, option) => {
@@ -264,9 +264,13 @@ const handleSelect = (value, option) => {
     query_editor.value.setVal("");
     udf_editor.value.setVal("");
   } else {
-    showedQuery = queryMap[value];
-    query_editor.value.setVal(showedQuery.input.query);
-    udf_editor.value.setVal(showedQuery.input.udf);
+    loading.value = !loading.value;
+    import(`../data/${queryMap[value]}/staff.js`).then((module) => {
+      showedQuery = module.query;
+      query_editor.value.setVal(showedQuery.input.query);
+      udf_editor.value.setVal(showedQuery.input.udf);
+      loading.value = !loading.value;
+    });
   }
 }
 
