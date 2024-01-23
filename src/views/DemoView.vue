@@ -206,9 +206,6 @@ import ExecutionProcess from "../components/ExecutionProcess.vue";
 import ExecutionChart from "@/components/ExecutionChart.vue";
 import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
-//import { q1 } from "../data/q1/staff";
-//import { q2 } from "../data/q2/staff";
-//import { q3 } from "../data/q3/staff";
 
 const query_editor = ref(null);
 const udf_editor = ref(null);
@@ -225,8 +222,8 @@ let offCheckbox = ref(true);
 let rewrite_on = ref(false);
 let adaptive_on = ref(false);
 
-let vanilla_show = ref(false);
-let IMBridge_show = ref(false);
+let vanilla_exec = ref(null);
+let IMBridge_exec = ref(null);
 
 let loading = ref(false);
 
@@ -326,17 +323,17 @@ const reRender = () => {
       udf_plan_o.value.setVal(code);
     }
   }
-  if (vanilla_show.value && IMBridge_show.value) {
-    if (time_chart.value) {
-      time_chart.value.reDraw(time_chart_data);
-    }
-    if (batch_chart.value) {
-      batch_chart.value.reDraw(batch_chart_data);
-    }
-    if (efficient_chart.value) {
-      efficient_chart.value.reDraw(efficient_chart_data);
-    }
+  // reDraw echarts
+  if (time_chart.value) {
+    time_chart.value.reDraw(time_chart_data);
   }
+  if (batch_chart.value) {
+    batch_chart.value.reDraw(batch_chart_data);
+  }
+  if (efficient_chart.value) {
+    efficient_chart.value.reDraw(efficient_chart_data);
+  }
+
   if(!activeSwitch.value && naive_tree.value){
     naive_tree.value.Draw(naive_tree_data);
   }
@@ -388,11 +385,6 @@ const handleClick = () => {
         }
       }
     }
-    
-    if (!activeSwitch.value) 
-      vanilla_show.value = true;
-    else
-      IMBridge_show.value = true;
 
     // set code data here.
     code = base.function_code;
@@ -415,9 +407,15 @@ const handleClick = () => {
     comp.exec = comp.exec.map((x) => {
       return { no: x.no, t: x.t, bs: x.bs, ef: (x.bs / x.t).toFixed(2) };
     });
-    batch_chart_data = extractChartData(base.exec, comp.exec, "bs");
-    time_chart_data = extractChartData(base.exec, comp.exec, "t");
-    efficient_chart_data = extractChartData(base.exec, comp.exec, "ef");
+    
+    if (!activeSwitch.value) 
+      vanilla_exec.value = base.exec;
+    else 
+      IMBridge_exec.value = comp.exec;
+
+    batch_chart_data = extractChartData(vanilla_exec.value, IMBridge_exec.value, "bs");
+    time_chart_data = extractChartData(vanilla_exec.value, IMBridge_exec.value, "t");
+    efficient_chart_data = extractChartData(vanilla_exec.value, IMBridge_exec.value, "ef");
     // set execution process here
     if (!activeSwitch.value)
       exec_process_n.value = base.exec;
