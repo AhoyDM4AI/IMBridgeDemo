@@ -42,7 +42,14 @@ const transOBjson = (plan, src) => {
   dst['label'] = src['OPERATOR'];
   dst['mark'] = 1;
   dst['shape'] = "rect";
-  dst['float'] = src['output'];
+  let desc = "";
+  //if (src['filter_predicates'])
+    //desc += 'filter_predicates: ' + src['filter_predicates'];
+  //if (src['special_predicates'])
+    //desc += 'special_predicates: ' + src['special_predicates'];
+  if (src['pyudf_metadata'])
+    desc += 'pyudf_metadata: ' + src['pyudf_metadata'];
+  dst['float'] = desc;
   if(src['CHILD_1']) {
     let node = transOBjson(plan, src['CHILD_1']);
     let edge = {'source': node['id'], 'target': dst['id'], label: ""};

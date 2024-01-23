@@ -14,10 +14,10 @@
                 <n-grid :cols="3" :x-gap="12">
                   <n-gi :span="2">
                     <n-select 
-                      v-model:value="selectedValues" 
                       size="medium"
                       placeholder="Select Prediction Query"
                       :options="options"
+                      @update:value="handleSelect"
                     />
                   </n-gi>
                   <n-gi :span="1">
@@ -59,7 +59,7 @@
             <n-gi>
               <h2 id="title">SQL Editor</h2>
               <CodeEditor
-                :lines="5"
+                :lines="15"
                 :lang="'sql'"
                 :readonly="false"
                 fontsize="12"
@@ -69,7 +69,7 @@
             <n-gi>
               <h2 id="title">Function Editor</h2>
               <CodeEditor
-                :lines="22"
+                :lines="25"
                 :lang="'python'"
                 :readonly="false"
                 fontsize="12"
@@ -208,6 +208,7 @@ import PlanTree from "../components/PlanTree.vue";
 import { ref, onMounted } from "vue";
 import { q1 } from "../data/q1/staff";
 import { q2 } from "../data/q2/staff";
+import { q3 } from "../data/q3/staff";
 
 const query_editor = ref(null);
 const udf_editor = ref(null);
@@ -253,21 +254,39 @@ const IMBridge_results_columns = ref([]);
 const vanilla_results = ref([]);
 const IMBridge_results = ref([]);
 
-const showedQuery = q2;
+let showedQuery = null; // default
+
+const queryMap = {'query1': q1, 'query2': q2, 'query3': q3};
+
+// select prediction query
+const handleSelect = (value, option) => {
+  if (value == 'query0') {
+    query_editor.value.setVal("");
+    udf_editor.value.setVal("");
+  } else {
+    showedQuery = queryMap[value];
+    query_editor.value.setVal(showedQuery.input.query);
+    udf_editor.value.setVal(showedQuery.input.udf);
+  }
+}
 
 // select component options.
 const options = [
-{
-  label: "User Define (Custom)",
-  value: 'query0'
-},
 {
   label: 'Expedia Qeury With Sklearn',
   value: 'query1'
 },
 {
-  label: 'Expedia Qeury With ONNX',
+  label: 'Expedia Qeury With PyTorch',
   value: 'query2'
+},
+{
+  label: 'Expedia Qeury With ONNX',
+  value: 'query3'
+},
+{
+  label: "User Define (Custom)",
+  value: 'query0'
 }];
 
 // switch color setting
@@ -290,10 +309,7 @@ const railStyle = ({
   return style;
 };
 
-onMounted(() => {
-  query_editor.value.setVal(showedQuery.input.query);
-  udf_editor.value.setVal(showedQuery.input.udf);
-});
+onMounted(() => {});
 
 const reRender = () => {
   if (!activeSwitch.value && udf_plan_n.value) {
@@ -378,8 +394,8 @@ const handleClick = () => {
       IMBridge_show.value = true;
 
     // set code data here.
-    code = base.function;
-    rewrite_code = comp.function;
+    code = base.function_code;
+    rewrite_code = comp.function_code;
     
     //set tree data here.
     naive_tree_data = base.plan;
@@ -409,11 +425,11 @@ const handleClick = () => {
 
     // set result set here
     if (!activeSwitch.value) {
-      vanilla_results_columns.value = q1.result_set.result_cols;
-      vanilla_results.value = q1.result_set.result_rows;
+      vanilla_results_columns.value = base.result_cols;
+      vanilla_results.value = base.result_rows;
     } else {
-      IMBridge_results_columns.value = q1.result_set.result_cols;
-      IMBridge_results.value = q1.result_set.result_rows;
+      IMBridge_results_columns.value = comp.result_cols;
+      IMBridge_results.value = comp.result_rows;
     }
     reRender();
   }, 2000);
