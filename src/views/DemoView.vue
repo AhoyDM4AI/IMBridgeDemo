@@ -140,7 +140,7 @@
             </n-collapse-item>
             <n-collapse-item title="Execution Process" name="3">
               <n-h3 style="margin-left: 12px; margin-bottom: 10px">
-                Total Elapsed Time (origin/opt): {{ naive_exec }}s/{{
+                Total Elapsed Time (OceanBase/IMBridge): {{ naive_exec }}s/{{
                   opt_exec
                 }}s
               </n-h3>
