@@ -170,13 +170,13 @@
                   ref="time_chart"
                 ></ExecutionChart>
               </n-card>
-              <n-card class=”chart title="Predition Efficiency Comparison">
+              <!--<n-card class=”chart title="Predition Efficiency Comparison">
                 <ExecutionChart
                   chart_id="efficient"
                   yName="Prediction Efficiency(row/ms)"
                   ref="efficient_chart"
                 ></ExecutionChart>
-              </n-card>
+              </n-card>-->
             </n-collapse-item>
             <n-collapse-item title="Result Set" name="4">
               <n-grid x-gap="12" y-gap="12" :cols="2">
