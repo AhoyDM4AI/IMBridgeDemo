@@ -140,7 +140,7 @@
             </n-collapse-item>
             <n-collapse-item title="Execution Process" name="3">
               <n-h3 style="margin-left: 12px; margin-bottom: 10px">
-                Total Elapsed Time (origin/opt): {{ naive_exec }}s/{{
+                Total Elapsed Time (OceanBase/IMBridge): {{ naive_exec }}s/{{
                   opt_exec
                 }}s
               </n-h3>
@@ -274,15 +274,15 @@ const handleSelect = (value, option) => {
 // select component options.
 const options = [
 {
-  label: 'Expedia Qeury With Sklearn',
+  label: 'Expedia Query With Sklearn',
   value: 'query1'
 },
 {
-  label: 'Expedia Qeury With PyTorch',
+  label: 'Expedia Query With PyTorch',
   value: 'query2'
 },
 {
-  label: 'Expedia Qeury With ONNX',
+  label: 'Expedia Query With ONNX',
   value: 'query3'
 },
 {
