@@ -11,7 +11,7 @@
             <n-gi style="padding-top: 8px">
               <h2 id="title">Settings</h2>
               <n-flex style="padding-left: 30px; padding-top: 5px" justify="space-between">
-                <n-grid :cols="3" :x-gap="12">
+                <n-grid :cols="3" x-gap="12" >
                   <n-gi :span="2">
                     <n-select 
                       size="medium"
@@ -37,10 +37,10 @@
                     @update:value="handleSwitch"
                   >
                     <template #checked>
-                      <p style="color:black">IMBridge</p>
+                      <n-text style="color:black">IMBridge</n-text>
                     </template>
                     <template #unchecked>
-                      <p style="color:black">OceanBase</p>
+                      <n-text style="color:black">OceanBase</n-text>
                     </template>
                   </n-switch>
                   <n-checkbox
@@ -95,7 +95,6 @@
               <n-grid x-gap="12" :cols="2">
                 <n-gi>
                   <n-card id="plan" title="OceanBase Original Code:">
-                    <!--<n-image width="80" src="/src/assets/all.svg" />-->
                     <CodeEditor
                       :lines="15"
                       :lang="'python'"
@@ -107,12 +106,6 @@
                 </n-gi>
                 <n-gi>
                   <n-card id="plan" title="IMBridge Rewritten Code:">
-                    <!--<n-image
-                      v-if="rewrite_on"
-                      width="53"
-                      src="/src/assets/rewrite.svg"
-                    />
-                    <n-image v-else width="80" src="/src/assets/all.svg" />-->
                     <CodeEditor
                       :lines="15"
                       :lang="'python'"
@@ -139,44 +132,65 @@
               </n-grid>
             </n-collapse-item>
             <n-collapse-item title="Execution Process" name="3">
-              <n-h3 style="margin-left: 12px; margin-bottom: 10px">
-                Total Elapsed Time (OceanBase/IMBridge): {{ naive_exec }}s/{{
-                  opt_exec
-                }}s
-              </n-h3>
+              <n-h2 style="margin-left: 12px; margin-bottom: 10px">
+                Total Elapsed Time (OceanBase / IMBridge): 
+                <h style="color:blue">{{ naive_exec }}</h> s /
+                <h style="color:green">{{ opt_exec }}</h> s
+              </n-h2>
               <n-grid x-gap="12" y-gap="12" :cols="2">
                 <n-gi>
-                  <n-card id="plan" title="OceanBase Execution">
-                    <ExecutionProcess :data="exec_process_n"></ExecutionProcess>
+                  <n-card id="plan">
+                    <ExecutionProcess :data="exec_process_n" title="Prediction Function Execution in OceanBase"></ExecutionProcess>
                   </n-card>
                 </n-gi>
                 <n-gi>
-                  <n-card id="plan" title="IMBridge Execution">
-                    <ExecutionProcess :data="exec_process_o"></ExecutionProcess>
+                  <n-card id="plan">
+                    <ExecutionProcess :data="exec_process_o" title="Prediction Function Execution in IMBridge"></ExecutionProcess>
                   </n-card>
                 </n-gi>
               </n-grid>
-              <n-card class=”chart title="Batch Size Comparison">
-                <ExecutionChart
-                  chart_id="batch"
-                  ref="batch_chart"
-                  yName="Batch Size"
-                ></ExecutionChart>
+              <n-card class="chart">
+                <n-button text @click="handleCollapse('batch_chart')">
+                  <n-text style="font-size:large; font-weight:600; color:black">
+                    Inference Batch Size Comparison
+                  </n-text>
+                </n-button>
+                <n-collapse-transition :show="batch_chart_show">
+                  <ExecutionChart
+                    chart_id="batch"
+                    ref="batch_chart"
+                    yName="Inference Batch Size"
+                  ></ExecutionChart>
+                </n-collapse-transition>
               </n-card>
-              <n-card class=”chart title="Predition Time Comparison">
-                <ExecutionChart
-                  chart_id="timing"
-                  yName="Prediction Time (ms)"
-                  ref="time_chart"
-                ></ExecutionChart>
+              <n-card class="chart">
+                <n-button text @click="handleCollapse('time_chart')">
+                  <n-text style="font-size:large; font-weight:600; color:black">
+                    Predition Function Execution Time Comparison
+                  </n-text>
+                </n-button>
+                <n-collapse-transition :show="time_chart_show">
+                  <ExecutionChart
+                    chart_id="timing"
+                    yName="Execution Time (ms)"
+                    ref="time_chart"
+                  ></ExecutionChart>
+                </n-collapse-transition>
               </n-card>
-              <!--<n-card class=”chart title="Predition Efficiency Comparison">
-                <ExecutionChart
-                  chart_id="efficient"
-                  yName="Prediction Efficiency(row/ms)"
-                  ref="efficient_chart"
-                ></ExecutionChart>
-              </n-card>-->
+              <n-card class="chart">
+                <n-button text @click="handleCollapse('efficient_chart')">
+                  <n-text style="font-size:large; font-weight:600; color:black;">
+                    Predition Function Execution Throughput Comparison
+                  </n-text>
+                </n-button>
+                <n-collapse-transition :show="efficient_chart_show">
+                  <ExecutionChart
+                    chart_id="efficient"
+                    yName="Throughput (row/ms)"
+                    ref="efficient_chart"
+                  ></ExecutionChart>
+                </n-collapse-transition>
+              </n-card>
             </n-collapse-item>
             <n-collapse-item title="Result Set" name="4">
               <n-grid x-gap="12" y-gap="12" :cols="2">
@@ -243,6 +257,12 @@ let batch_chart_data = null;
 let time_chart_data = null;
 let efficient_chart_data = null;
 
+let batch_chart_show = ref(true);
+let time_chart_show = ref(true);
+let efficient_chart_show = ref(true);
+
+const collapseMap = {'batch_chart': batch_chart_show, 'time_chart': time_chart_show, 'efficient_chart': efficient_chart_show, };
+
 const exec_process_n = ref([]);
 const exec_process_o = ref([]);
 
@@ -253,8 +273,6 @@ const IMBridge_results = ref([]);
 
 let showedQuery = null; // default
 
-const queryMap = {'query1': 'q1', 'query2': 'q2', 'query3': 'q3'};
-
 // select prediction query
 const handleSelect = (value, option) => {
   if (value == 'query0') {
@@ -262,7 +280,7 @@ const handleSelect = (value, option) => {
     udf_editor.value.setVal("");
   } else {
     loading.value = !loading.value;
-    import(`../data/${queryMap[value]}/staff.js`).then((module) => {
+    import(`../data/${value}/staff.js`).then((module) => {
       showedQuery = module.query;
       query_editor.value.setVal(showedQuery.input.query);
       udf_editor.value.setVal(showedQuery.input.udf);
@@ -271,19 +289,26 @@ const handleSelect = (value, option) => {
   }
 }
 
+const handleCollapse = (value) => {
+  console.log(value);
+  let chart_show = collapseMap[value];
+  chart_show.value = !chart_show.value;
+  reRender();
+};
+
 // select component options.
 const options = [
 {
   label: 'Expedia Query With Sklearn',
-  value: 'query1'
+  value: 'q1'
 },
 {
   label: 'Expedia Query With PyTorch',
-  value: 'query2'
+  value: 'q2'
 },
 {
   label: 'Expedia Query With ONNX',
-  value: 'query3'
+  value: 'q3'
 },
 {
   label: "User Define (Custom)",
@@ -436,7 +461,7 @@ const handleClick = () => {
 
 
 const handleSwitch = (value) => {
-  offCheckbox = !value;
+  offCheckbox.value = !value;
 };
 
 </script>

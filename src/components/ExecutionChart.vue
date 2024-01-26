@@ -1,5 +1,5 @@
 <template>
-  <div style="text-align: center">
+  <div style="text-align: center; padding-top: 20px;" >
     <div :id="props.chart_id" style="height: 300px" ref="chartDom"></div>
   </div>
 </template>
