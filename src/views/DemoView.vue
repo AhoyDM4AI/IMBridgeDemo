@@ -4,7 +4,7 @@
       <n-layout has-sider>
         <n-layout-sider
           bordered
-          :width="475"
+          :width="480"
           style="background: rgb(234, 238, 243)"
         >
           <n-grid y-gap="6" :cols="1">
@@ -152,14 +152,14 @@
               <n-card class="chart">
                 <n-button text @click="handleCollapse('batch_chart')">
                   <n-text style="font-size:large; font-weight:600; color:black">
-                    Inference Batch Size Comparison
+                    Evaluation Batch Size Comparison
                   </n-text>
                 </n-button>
                 <n-collapse-transition :show="batch_chart_show">
                   <ExecutionChart
                     chart_id="batch"
                     ref="batch_chart"
-                    yName="Inference Batch Size"
+                    yName="Evaluation Batch Size"
                   ></ExecutionChart>
                 </n-collapse-transition>
               </n-card>
