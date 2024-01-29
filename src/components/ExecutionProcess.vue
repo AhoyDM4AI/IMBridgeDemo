@@ -13,7 +13,7 @@
           </template>
           <template #header>
             <n-text strong depth="1">
-              列显示设置
+              Columns Display Setting
             </n-text>
           </template>
           <n-checkbox-group v-model:value="checked_cols" @update:value="handleCheckedCol">
@@ -56,7 +56,7 @@ const createColumns = () => {
       titleAlign: "center",
     },
     {
-      title: "Inference Batch Size",
+      title: "Evaluation Batch Size",
       key: "bs",
       align: "center",
       titleAlign: "center",
