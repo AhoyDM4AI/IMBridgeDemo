@@ -51,7 +51,7 @@
                   <n-checkbox
                     v-model:checked="adaptive_on"
                     :disabled="offCheckbox"
-                    label="Adaptive Batching"
+                    label="Prediciton Operator"
                   />
                 </n-flex>
               </n-flex>
